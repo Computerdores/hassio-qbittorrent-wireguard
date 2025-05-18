@@ -1,7 +1,13 @@
 #!/usr/bin/bashio
 # Forked from binhex's OpenVPN dockers
-# Wait until tunnel is up
+# undo options set by bashio
+set +e
+set +E
+set +u
+set +o pipefail
 
+
+# Wait until tunnel is up
 while :; do
 	tunnelstat=$(netstat -ie | grep -E "tun|tap|wg")
 	if [[ ! -z "${tunnelstat}" ]]; then
@@ -193,4 +199,4 @@ echo "--------------------"
 if [[ $ENABLEPROTONVPNPORTFWD -eq 1 ]]; then
 	nohup /etc/qbittorrent/portfwd.sh &
 fi
-exec /bin/bash /etc/qbittorrent/start.sh
+exec /etc/qbittorrent/start.sh

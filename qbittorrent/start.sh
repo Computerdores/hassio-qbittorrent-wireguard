@@ -1,4 +1,12 @@
 #!/usr/bin/bashio
+
+# undo options set by bashio
+set +e
+set +E
+set +u
+set +o pipefail
+
+
 # Check if /config/qBittorrent exists, if not make the directory
 if [[ ! -e /config/qBittorrent/config ]]; then
 	mkdir -p /config/qBittorrent/config

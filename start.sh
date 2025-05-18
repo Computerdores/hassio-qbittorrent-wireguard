@@ -1,5 +1,11 @@
 #!/usr/bin/bashio
+# undo options set by bashio
+set +E
+set +u
+set +o pipefail
 
+
+# Enable exit on error
 set -e
 
 # check for presence of network interface docker0
@@ -143,4 +149,4 @@ if ip link | grep -q `basename -s .conf $VPN_CONFIG`; then
 fi
 wg-quick up $VPN_CONFIG
 
-exec /bin/bash /etc/qbittorrent/iptables.sh
+exec /etc/qbittorrent/iptables.sh

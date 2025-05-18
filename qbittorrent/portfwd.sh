@@ -1,5 +1,12 @@
 #!/usr/bin/bashio
 
+# undo options set by bashio
+set +e
+set +E
+set +u
+set +o pipefail
+
+
 port=$(natpmpc -a 1 0 udp 60 -g 10.2.0.1 | grep "public port" | awk '/Mapped public port/ {print $4}')
 
 bashio::log.info "Public Listening Port: $port"

@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/usr/bin/bashio
 
 port=$(natpmpc -a 1 0 udp 60 -g 10.2.0.1 | grep "public port" | awk '/Mapped public port/ {print $4}')
+
+bashio::log.info "Public Listening Port: $port"
 
 # find and replace "Session\Port=.*" in /config/qBittorrent/config/qBittorrent.conf with $port
 sed -i -r "s/^(Session\\\Port=).*/\1$port/" /config/qBittorrent/config/qBittorrent.conf

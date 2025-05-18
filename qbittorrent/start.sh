@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bashio
 # Check if /config/qBittorrent exists, if not make the directory
 if [[ ! -e /config/qBittorrent/config ]]; then
 	mkdir -p /config/qBittorrent/config
@@ -8,7 +8,7 @@ chown -R ${PUID}:${PGID} /config/qBittorrent
 
 # Check if qBittorrent.conf exists, if not, copy the template over
 if [ ! -e /config/qBittorrent/config/qBittorrent.conf ]; then
-	echo "[WARNING] qBittorrent.conf is missing, this is normal for the first launch! Copying template." | ts '%Y-%m-%d %H:%M:%.S'
+	bashio::log.warning "qBittorrent.conf is missing, this is normal for the first launch! Copying template."
 	cp /etc/qbittorrent/qBittorrent.conf /config/qBittorrent/config/qBittorrent.conf
 	chmod 755 /config/qBittorrent/config/qBittorrent.conf
 	chown ${PUID}:${PGID} /config/qBittorrent/config/qBittorrent.conf
@@ -18,10 +18,10 @@ fi
 export ENABLE_SSL=$(echo "${ENABLE_SSL,,}")
 
 if [[ ${ENABLE_SSL} == "1" || ${ENABLE_SSL} == "true" || ${ENABLE_SSL} == "yes" ]]; then
-	echo "[INFO] ENABLE_SSL is set to '${ENABLE_SSL}'" | ts '%Y-%m-%d %H:%M:%.S'
+	bashio::log.info "ENABLE_SSL is set to '${ENABLE_SSL}'"
 	if [[ ${HOST_OS,,} == 'unraid' ]]; then
-		echo "[SYSTEM] If you use Unraid, and get something like a 'ERR_EMPTY_RESPONSE' in your browser, add https:// to the front of the IP, and/or do this:" | ts '%Y-%m-%d %H:%M:%.S'
-		echo "[SYSTEM] Edit this Docker, change the slider in the top right to 'advanced view' and change http to https at the WebUI setting." | ts '%Y-%m-%d %H:%M:%.S'
+		bashio::log.notice "If you use Unraid, and get something like a 'ERR_EMPTY_RESPONSE' in your browser, add https:// to the front of the IP, and/or do this:"
+		bashio::log.notice "Edit this Docker, change the slider in the top right to 'advanced view' and change http to https at the WebUI setting."
 	fi
 	# Allow for cert and key to be secrets
 	if [[ -e /run/secrets/WebUICertificate.crt ]]; then
@@ -34,43 +34,43 @@ if [[ ${ENABLE_SSL} == "1" || ${ENABLE_SSL} == "true" || ${ENABLE_SSL} == "yes" 
 		ln -s /run/secrets/WebUIKey.key /config/qBittorrent/config/WebUIKey.key
 	fi
 	if [ ! -e /config/qBittorrent/config/WebUICertificate.crt ]; then
-		echo "[WARNING] WebUI Certificate is missing, generating a new Certificate and Key" | ts '%Y-%m-%d %H:%M:%.S'
+		bashio::log.warning "WebUI Certificate is missing, generating a new Certificate and Key"
 		openssl req -new -x509 -nodes -out /config/qBittorrent/config/WebUICertificate.crt -keyout /config/qBittorrent/config/WebUIKey.key -subj "/C=NL/ST=localhost/L=localhost/O=/OU=/CN="
 		chown -R ${PUID}:${PGID} /config/qBittorrent/config
 	elif [ ! -e /config/qBittorrent/config/WebUIKey.key ]; then
-		echo "[WARNING] WebUI Key is missing, generating a new Certificate and Key" | ts '%Y-%m-%d %H:%M:%.S'
+		bashio::log.warning "WebUI Key is missing, generating a new Certificate and Key"
 		openssl req -new -x509 -nodes -out /config/qBittorrent/config/WebUICertificate.crt -keyout /config/qBittorrent/config/WebUIKey.key -subj "/C=NL/ST=localhost/L=localhost/O=/OU=/CN="
 		chown -R ${PUID}:${PGID} /config/qBittorrent/config
 	fi
 	if grep -Fxq 'WebUI\HTTPS\CertificatePath=/config/qBittorrent/config/WebUICertificate.crt' "/config/qBittorrent/config/qBittorrent.conf"; then
-		echo "[INFO] /config/qBittorrent/config/qBittorrent.conf already has the line WebUICertificate.crt loaded, nothing to do." | ts '%Y-%m-%d %H:%M:%.S'
+		bashio::log.info "/config/qBittorrent/config/qBittorrent.conf already has the line WebUICertificate.crt loaded, nothing to do."
 	else
-		echo "[WARNING] /config/qBittorrent/config/qBittorrent.conf doesn't have the WebUICertificate.crt loaded. Added it to the config." | ts '%Y-%m-%d %H:%M:%.S'
+		bashio::log.warning "/config/qBittorrent/config/qBittorrent.conf doesn't have the WebUICertificate.crt loaded. Added it to the config."
 		echo 'WebUI\HTTPS\CertificatePath=/config/qBittorrent/config/WebUICertificate.crt' >>"/config/qBittorrent/config/qBittorrent.conf"
 	fi
 	if grep -Fxq 'WebUI\HTTPS\KeyPath=/config/qBittorrent/config/WebUIKey.key' "/config/qBittorrent/config/qBittorrent.conf"; then
-		echo "[INFO] /config/qBittorrent/config/qBittorrent.conf already has the line WebUIKey.key loaded, nothing to do." | ts '%Y-%m-%d %H:%M:%.S'
+		bashio::log.info "/config/qBittorrent/config/qBittorrent.conf already has the line WebUIKey.key loaded, nothing to do."
 	else
-		echo "[WARNING] /config/qBittorrent/config/qBittorrent.conf doesn't have the WebUIKey.key loaded. Added it to the config." | ts '%Y-%m-%d %H:%M:%.S'
+		bashio::log.warning "/config/qBittorrent/config/qBittorrent.conf doesn't have the WebUIKey.key loaded. Added it to the config."
 		echo 'WebUI\HTTPS\KeyPath=/config/qBittorrent/config/WebUIKey.key' >>"/config/qBittorrent/config/qBittorrent.conf"
 	fi
 	if grep -xq 'WebUI\\HTTPS\\Enabled=true\|WebUI\\HTTPS\\Enabled=false' "/config/qBittorrent/config/qBittorrent.conf"; then
 		if grep -xq 'WebUI\\HTTPS\\Enabled=false' "/config/qBittorrent/config/qBittorrent.conf"; then
-			echo "[WARNING] /config/qBittorrent/config/qBittorrent.conf does have the WebUI\HTTPS\Enabled set to false, changing it to true." | ts '%Y-%m-%d %H:%M:%.S'
+			bashio::log.warning "/config/qBittorrent/config/qBittorrent.conf does have the WebUI\HTTPS\Enabled set to false, changing it to true."
 			sed -i 's/WebUI\\HTTPS\\Enabled=false/WebUI\\HTTPS\\Enabled=true/g' "/config/qBittorrent/config/qBittorrent.conf"
 		else
-			echo "[INFO] /config/qBittorrent/config/qBittorrent.conf does have the WebUI\HTTPS\Enabled already set to true." | ts '%Y-%m-%d %H:%M:%.S'
+			bashio::log.info "/config/qBittorrent/config/qBittorrent.conf does have the WebUI\HTTPS\Enabled already set to true."
 		fi
 	else
-		echo "[WARNING] /config/qBittorrent/config/qBittorrent.conf doesn't have the WebUI\HTTPS\Enabled loaded. Added it to the config." | ts '%Y-%m-%d %H:%M:%.S'
+		bashio::log.warning "/config/qBittorrent/config/qBittorrent.conf doesn't have the WebUI\HTTPS\Enabled loaded. Added it to the config."
 		echo 'WebUI\HTTPS\Enabled=true' >>"/config/qBittorrent/config/qBittorrent.conf"
 	fi
 elif [[ ${ENABLE_SSL} == "0" || ${ENABLE_SSL} == "false" || ${ENABLE_SSL} == "no" ]]; then
-	echo "[WARNING] ENABLE_SSL is set to '${ENABLE_SSL}', SSL is not enabled. This could cause issues with logging if other apps use the same Cookie name (SID)." | ts '%Y-%m-%d %H:%M:%.S'
-	echo "[WARNING] Removing the SSL configuration from the config file..." | ts '%Y-%m-%d %H:%M:%.S'
+	bashio::log.warning "ENABLE_SSL is set to '${ENABLE_SSL}', SSL is not enabled. This could cause issues with logging if other apps use the same Cookie name (SID)."
+	bashio::log.warning "Removing the SSL configuration from the config file..."
 	sed -i '/^WebUI\\HTTPS*/d' "/config/qBittorrent/config/qBittorrent.conf"
 else
-	echo "[WARNING] ENABLE_SSL is set to '${ENABLE_SSL}', SSL config ignored. No changes made." | ts '%Y-%m-%d %H:%M:%.S'
+	bashio::log.warning "ENABLE_SSL is set to '${ENABLE_SSL}', SSL config ignored. No changes made."
 fi
 
 # Check qbtUser, change UID/GID if they don't match the environment variables.
@@ -81,7 +81,7 @@ if [[ ${PUID} != $qbtUID || ${PGID} != $qbtGID ]]; then
 fi
 
 # Start qBittorrent
-echo "[INFO] Starting qBittorrent daemon..." | ts '%Y-%m-%d %H:%M:%.S'
+bashio::log.info "Starting qBittorrent daemon..."
 chmod -R 755 /config/qBittorrent
 nohup /bin/bash /entrypoint.sh >/dev/null 2>&1 &
 
@@ -93,7 +93,7 @@ qbittorrentpid=$(pgrep -f "qbittorrent-nox")
 
 # If the process exists, make sure that the log file has the proper rights and start the health check
 if [ -e /proc/$qbittorrentpid ]; then
-	echo "[INFO] qBittorrent PID: $qbittorrentpid" | ts '%Y-%m-%d %H:%M:%.S'
+	bashio::log.info "qBittorrent PID: $qbittorrentpid"
 
 	if [[ -e /config/qBittorrent/data/logs/qbittorrent.log ]]; then
 		chmod 775 /config/qBittorrent/data/logs/qbittorrent.log
@@ -108,35 +108,35 @@ if [ -e /proc/$qbittorrentpid ]; then
 
 	# If host is zero (not set) default it to the DEFAULT_HOST variable
 	if [[ -z "${HOST}" ]]; then
-		echo "[INFO] HEALTH_CHECK_HOST is not set. For now using default host ${DEFAULT_HOST}" | ts '%Y-%m-%d %H:%M:%.S'
+		bashio::log.info "HEALTH_CHECK_HOST is not set. For now using default host ${DEFAULT_HOST}"
 		HOST=${DEFAULT_HOST}
 	fi
 
 	# If HEALTH_CHECK_INTERVAL is zero (not set) default it to DEFAULT_INTERVAL
 	if [[ -z "${HEALTH_CHECK_INTERVAL}" ]]; then
-		echo "[INFO] HEALTH_CHECK_INTERVAL is not set. For now using default interval of ${DEFAULT_INTERVAL}" | ts '%Y-%m-%d %H:%M:%.S'
+		bashio::log.info "HEALTH_CHECK_INTERVAL is not set. For now using default interval of ${DEFAULT_INTERVAL}"
 		INTERVAL=${DEFAULT_INTERVAL}
 	fi
 
 	# If HEALTH_CHECK_SILENT is zero (not set) default it to supression
 	if [[ -z "${HEALTH_CHECK_SILENT}" ]]; then
-		echo "[INFO] HEALTH_CHECK_SILENT is not set. Because this variable is not set, it will be supressed by default" | ts '%Y-%m-%d %H:%M:%.S'
+		bashio::log.info "HEALTH_CHECK_SILENT is not set. Because this variable is not set, it will be supressed by default"
 		HEALTH_CHECK_SILENT=1
 	fi
 
 	if [ ! -z ${RESTART_CONTAINER} ]; then
-		echo "[INFO] RESTART_CONTAINER defined as '${RESTART_CONTAINER}'" | ts '%Y-%m-%d %H:%M:%.S'
+		bashio::log.info "RESTART_CONTAINER defined as '${RESTART_CONTAINER}'"
 	else
-		echo "[WARNING] RESTART_CONTAINER not defined,(via -e RESTART_CONTAINER), defaulting to 'yes'" | ts '%Y-%m-%d %H:%M:%.S'
+		bashio::log.warning "RESTART_CONTAINER not defined,(via -e RESTART_CONTAINER), defaulting to 'yes'"
 		export RESTART_CONTAINER="yes"
 	fi
 
 	# If HEALTH_CHECK_AMOUNT is zero (not set) default it to DEFAULT_HEALTH_CHECK_AMOUNT
 	if [[ -z ${HEALTH_CHECK_AMOUNT} ]]; then
-		echo "[INFO] HEALTH_CHECK_AMOUNT is not set. For now using default interval of ${DEFAULT_HEALTH_CHECK_AMOUNT}" | ts '%Y-%m-%d %H:%M:%.S'
+		bashio::log.info "HEALTH_CHECK_AMOUNT is not set. For now using default interval of ${DEFAULT_HEALTH_CHECK_AMOUNT}"
 		HEALTH_CHECK_AMOUNT=${DEFAULT_HEALTH_CHECK_AMOUNT}
 	fi
-	echo "[INFO] HEALTH_CHECK_AMOUNT is set to ${HEALTH_CHECK_AMOUNT}" | ts '%Y-%m-%d %H:%M:%.S'
+	bashio::log.info "HEALTH_CHECK_AMOUNT is set to ${HEALTH_CHECK_AMOUNT}"
 
 	while true; do
 		# First wait for the health check interval.
@@ -144,7 +144,7 @@ if [ -e /proc/$qbittorrentpid ]; then
 
 		# Confirm the process is still running, start it back up if it's not.
 		if ! ps -p $qbittorrentpid >/dev/null; then
-			echo "[ERROR] qBittorrent daemon is not running. Restarting..." | ts '%Y-%m-%d %H:%M:%.S'
+			bashio::log.error "qBittorrent daemon is not running. Restarting..."
 			nohup /bin/bash /entrypoint.sh >/dev/null 2>&1 &
 
 			# wait for the entrypoint.sh script to finish and grab the qbittorrent pid
@@ -157,15 +157,15 @@ if [ -e /proc/$qbittorrentpid ]; then
 		ping -c ${HEALTH_CHECK_AMOUNT} $HOST >/dev/null 2>&1
 		STATUS=$?
 		if [[ "${STATUS}" -ne 0 ]]; then
-			echo "[ERROR] Network is possibly down." | ts '%Y-%m-%d %H:%M:%.S'
+			bashio::log.error "Network is possibly down."
 			sleep 1
 			if [[ ${RESTART_CONTAINER,,} == "1" || ${RESTART_CONTAINER,,} == "true" || ${RESTART_CONTAINER,,} == "yes" ]]; then
-				echo "[INFO] Restarting container." | ts '%Y-%m-%d %H:%M:%.S'
+				bashio::log.info "Restarting container."
 				exit 1
 			fi
 		fi
 		if [[ ${HEALTH_CHECK_SILENT,,} == "0" || ${HEALTH_CHECK_SILENT,,} == "false" || ${HEALTH_CHECK_SILENT,,} == "no" ]]; then
-			echo "[INFO] Network is up" | ts '%Y-%m-%d %H:%M:%.S'
+			bashio::log.info "Network is up"
 		fi
 
 		# Check the NAT port forward and update qBittorrent config if there is a change.
@@ -184,11 +184,11 @@ if [ -e /proc/$qbittorrentpid ]; then
 				fi
 				curl --silent -X 'POST' "$WEBUI_URL/api/v2/auth/logout" -H 'accept: */*' -d '' --cookie $cookie >/dev/null 2>&1
 			else
-				echo "[WARNING] Unable to log into the web UI." | ts '%Y-%m-%d %H:%M:%.S'
+				bashio::log.warning "Unable to log into the web UI."
 			fi
 			unset cookie
 		fi
 	done
 else
-	echo "[ERROR] qBittorrent failed to start!" | ts '%Y-%m-%d %H:%M:%.S'
+	bashio::log.error "qBittorrent failed to start!"
 fi

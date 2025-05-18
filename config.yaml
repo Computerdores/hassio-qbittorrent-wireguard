@@ -1,6 +1,6 @@
 name: "qBittorrent-WireGuard"
 description: "qBittorrent with WireGuard and automatic Port Forwarding for ProtonVPN"
-version: "1.0.1"
+version: "1.1.0"
 slug: "qbittorrent_wireguard"
 init: false
 arch:
@@ -18,10 +18,12 @@ map:
   - "share:rw"
 options:
   enable_protonvpn_port_forwarding: false
+  restart_container: true
   lan_network: "127.0.0.1,172.30.0.0/16,192.168.0.0/16"
   name_servers: "1.1.1.1,1.0.0.1"
 schema:
   enable_protonvpn_port_forwarding: bool
+  restart_container: bool
   lan_network: str
   name_servers: str
 environment:

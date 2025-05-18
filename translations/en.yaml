@@ -1,0 +1,13 @@
+configuration:
+  enable_protonvpn_port_forwarding:
+    name: "Enable Port Forwarding"
+    description: "Enables ProtonVPN Port Forwarding. This is required for active seeding."
+  restart_container:
+    name: "Restart on Network Down"
+    description: "Attempts to detect when the network is down and restarts the container in an attempt to fix it."
+  lan_network:
+    name: "LAN Networks"
+    description: "LAN Networks to add routes for. A comma-separated list of CIDR ranges."
+  name_servers:
+    name: "Name Servers"
+    description: "Name servers to use. A comma-separated list of IP addresses."

@@ -50,7 +50,23 @@ ADD qbittorrent/ /etc/qbittorrent/
 RUN chmod +x /start.sh
 RUN chmod +x /etc/qbittorrent/*.sh
 
+#-- HassIO Section
+# Install Bashio 
+RUN mkdir -p /tmp/bashio
+RUN curl -f -L -s -S "https://github.com/hassio-addons/bashio/archive/v0.17.0.tar.gz" | tar -xzf - --strip 1 -C /tmp/bashio
+RUN mv /tmp/bashio/lib /usr/lib/bashio
+RUN ln -s /usr/lib/bashio/bashio /usr/bin/bashio
+RUN rm -rf /tmp/bashio
+
+ADD apply_config.sh /
+RUN chmod +x /apply_config.sh
+
 EXPOSE 8080
-EXPOSE 8999
-EXPOSE 8999/udp
-ENTRYPOINT ["/bin/bash", "/start.sh"]
+ENTRYPOINT ["/apply_config.sh"]
+
+HEALTHCHECK \
+    --interval=5s \
+    --retries=5 \
+    --start-period=30s \
+    --timeout=25s \
+    CMD pgrep qbittorrent || exit 1

@@ -11,3 +11,5 @@ configuration:
   name_servers:
     name: "Name Servers"
     description: "Name servers to use. A comma-separated list of IP addresses."
+network:
+  "8080/tcp": "The WebUI port (Not used for ingress)."

@@ -7,7 +7,8 @@ mkdir -p /share/qBittorrent
 export ENABLEPROTONVPNPORTFWD=$([ "$(bashio::config 'enable_protonvpn_port_forwarding')" = "true" ] && echo 1 || echo 0)
 export LAN_NETWORK=$(bashio::config 'lan_network')
 export NAME_SERVERS=$(bashio::config 'name_servers')
-export ENABLE_SSL="no" # TODO
+export ENABLE_SSL="false" # TODO: make configurable
+export RESTART_CONTAINER="true" # TODO: make configurable
 
 # other necessary env vars
 export PUID=0

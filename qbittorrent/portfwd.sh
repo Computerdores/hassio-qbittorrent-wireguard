@@ -15,4 +15,5 @@ bashio::log.info "Public Listening Port: $port"
 sed -i -r "s/^(Session\\\Port=).*/\1$port/" /config/qBittorrent/config/qBittorrent.conf
 
 # run the port forward loop.
-while true ; do date ; natpmpc -a 1 0 udp 60 -g 10.2.0.1 && natpmpc -a 1 0 tcp 60 -g 10.2.0.1 || { echo -e "ERROR with natpmpc command \a" ; break ; } ; sleep 45 ; done
+rm /config/natpmpc.log >/dev/null 2>/dev/null
+while true ; do date >/config/natpmpc.log 2>/config/natpmpc.log ; natpmpc -a 1 0 udp 60 -g 10.2.0.1 >/config/natpmpc.log 2>/config/natpmpc.log && natpmpc -a 1 0 tcp 60 -g 10.2.0.1 >/config/natpmpc.log 2>/config/natpmpc.log || { bashio::log.error "ERROR with natpmpc command \a" ; break ; } ; sleep 45 ; done

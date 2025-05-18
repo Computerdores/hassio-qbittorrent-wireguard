@@ -1,5 +1,6 @@
-# Based on the official qbittorrent-nox image
-FROM qbittorrentofficial/qbittorrent-nox:5.1.0-1
+# only present for the workaround for the build workflow in the addon repository
+ARG BUILD_FROM
+FROM $BUILD_FROM
 
 WORKDIR /opt
 

@@ -1,0 +1,29 @@
+name: "qBittorrent-WireGuard"
+description: "qBittorrent with WireGuard and automatic Port Forwarding for ProtonVPN"
+version: "1.0.0"
+slug: "qbittorrent_wireguard-test"
+init: false
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+privileged:
+  - NET_ADMIN
+ingress: true
+ingress_port: 8080
+map:
+  - "addon_config:rw"
+  - "share:rw"
+options:
+  enable_protonvpn_port_forwarding: false
+  lan_network: "localhost,127.0.0.1,172.30.0.0/16,192.168.0.0/16"
+  name_servers: "1.1.1.1,1.0.0.1"
+schema:
+  enable_protonvpn_port_forwarding: bool
+  lan_network: str
+  name_servers: str
+environment:
+  QBT_LEGAL_NOTICE: "confirm"
+  TZ: "Europe/Berlin"

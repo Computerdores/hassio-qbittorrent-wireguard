@@ -1,8 +1,24 @@
-# [qBittorrent](https://github.com/qbittorrent/qBittorrent) and WireGuard
+# Home Assistant Add-on: qBittorrent-Wireguard
 
-Docker container which runs [qBittorrent](https://github.com/qbittorrent/qBittorrent)-nox (headless) version 5.1.0 client while connecting to WireGuard with iptables killswitch to prevent IP leakage when the tunnel goes down.
+_qBittorrent and WireGuard with automatic Port Forwarding for ProtonVPN._
 
-# Specs and Features
+![Supports aarch64 Architecture][aarch64-shield]
+![Supports amd64 Architecture][amd64-shield]
+![Supports armhf Architecture][armhf-shield]
+![Supports armv7 Architecture][armv7-shield]
+![Supports i386 Architecture][i386-shield]
+
+[aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
+[amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
+[armhf-shield]: https://img.shields.io/badge/armhf-yes-green.svg
+[armv7-shield]: https://img.shields.io/badge/armv7-yes-green.svg
+[i386-shield]: https://img.shields.io/badge/i386-yes-green.svg
+
+## [qBittorrent](https://github.com/qbittorrent/qBittorrent) and WireGuard
+
+Addon runs [qBittorrent](https://github.com/qbittorrent/qBittorrent)-nox (headless) version 5.1.0 client while connecting to WireGuard with iptables killswitch to prevent IP leakage when the tunnel goes down.
+
+## Specs and Features
 * Base: Alpine Linux
 * Supports amd64 and arm64 architectures.
 * [qBittorrent](https://github.com/qbittorrent/qBittorrent) from the official Docker repo (qbittorrentofficial/qbittorrent-nox:5.1.0-1)
@@ -14,20 +30,9 @@ Docker container which runs [qBittorrent](https://github.com/qbittorrent/qBittor
 * Adds [VueTorrent](https://github.com/VueTorrent/VueTorrent) (alternate web UI) which can be enabled (or not) by the user.
 * Works with Proton VPN's port forward VPN servers to automatically enable forwarding in your container, and automatically sets the connection port in qBittorrent to match the forwarded port.
 
-# Documentation
-All documentation is provided in the [wiki](https://github.com/tenseiken/docker-qbittorrent-wireguard/wiki).
 
-# Issues
-If you are having issues with this container, and you could not find a solution in the [wiki](https://github.com/tenseiken/docker-qbittorrent-wireguard/wiki), please submit an [issue](https://github.com/tenseiken/docker-qbittorrent-wireguard/issues) on GitHub.  
-Please provide logs, Docker version and other information that can simplify reproducing the issue.  
-If possible, always use the most up to date version of Docker, your operating system, kernel and the container itself. My time is finite, so support is always a best-effort basis.
-
-# Credits
+## Credits
+* [tenseiken/docker-qbittorrent-wireguard](https://github.com/tenseiken/docker-qbittorrent-wireguard)
 * [DyonR/docker-qBittorrentvpn](https://github.com/DyonR/docker-qbittorrentvpn)
-
-This project originates from DyonR/docker-qbittorrentvpn, but forking wasn't possible because tenseiken/docker-qbittorrentvpn uses the fork already. I forked to tenseiken/docker-qbittorrentvpn to make some minor adjustments to the code in order to send a pull request to the original repo, but the PR was never accepted and the original project was archived. This new project drops the OpenVPN support since Wireguard is the superior option, and any VPN provider worth using offers Wireguard servers. I also dropped the option to just not use a VPN. If you don't wish to use a VPN, I highly recommend you make use of the [official qBittorrent repo](https://hub.docker.com/r/qbittorrentofficial/qbittorrent-nox) instead of this one.
-
 * [MarkusMcNugen/docker-qBittorrentvpn](https://github.com/MarkusMcNugen/docker-qBittorrentvpn)  
 * [DyonR/jackettvpn](https://github.com/DyonR/jackettvpn)
-
-DyonR/docker-qBittorrentvpn originates from MarkusMcNugen/docker-qBittorrentvpn, but forking was not possible since DyonR/jackettvpn uses the fork already.

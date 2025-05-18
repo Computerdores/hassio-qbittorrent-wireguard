@@ -8,7 +8,7 @@ Docker container which runs [qBittorrent](https://github.com/qbittorrent/qBittor
 * [qBittorrent](https://github.com/qbittorrent/qBittorrent) from the official Docker repo (qbittorrentofficial/qbittorrent-nox:5.1.0-1)
 * Uses the Wireguard VPN software.
 * IP tables killswitch to prevent IP leaking when VPN connection fails.
-* Configurable UID and GID for config files and /downloads for qBittorrent.
+* Configurable UID and GID for config files and /share/qBittorrent for qBittorrent.
 * BitTorrent port 8999 exposed by default.
 * Automatically restarts the qBittorrent process in the event of it crashing.
 * Adds [VueTorrent](https://github.com/VueTorrent/VueTorrent) (alternate web UI) which can be enabled (or not) by the user.

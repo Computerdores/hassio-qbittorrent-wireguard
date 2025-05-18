@@ -4,7 +4,7 @@ FROM qbittorrentofficial/qbittorrent-nox:5.1.0-1
 WORKDIR /opt
 
 # Make directories
-RUN mkdir -p /downloads /config/qBittorrent /etc/qbittorrent /etc/vuetorrent
+RUN mkdir -p /config/qBittorrent /etc/qbittorrent /etc/vuetorrent
 
 # Download and extract VueTorrent
 RUN apk --no-cache --update-cache update \
@@ -43,8 +43,6 @@ RUN apk --no-cache --update-cache update \
 
 # Remove src_valid_mark from wg-quick
 RUN sed -i /net\.ipv4\.conf\.all\.src_valid_mark/d `which wg-quick`
-
-VOLUME /config /downloads
 
 ADD start.sh /
 ADD qbittorrent/ /etc/qbittorrent/

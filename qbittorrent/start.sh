@@ -6,10 +6,6 @@ fi
 # Set the correct rights accordingly to the PUID and PGID on /config/qBittorrent
 chown -R ${PUID}:${PGID} /config/qBittorrent
 
-##Disabling this because the downloads folder is my whole NAS and file ownerships are already managed by ACL.
-# Set the rights on the /downloads folder
-#find /downloads -not -user ${PUID} -execdir chown ${PUID}:${PGID} {} \+
-
 # Check if qBittorrent.conf exists, if not, copy the template over
 if [ ! -e /config/qBittorrent/config/qBittorrent.conf ]; then
 	echo "[WARNING] qBittorrent.conf is missing, this is normal for the first launch! Copying template." | ts '%Y-%m-%d %H:%M:%.S'
